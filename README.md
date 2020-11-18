@@ -21,6 +21,7 @@ A Flutter application to show COVID-19 data from various sources.
 ## Wiki
 * [Package http](https://pub.dev/packages/http)
 * [Package provider](https://pub.dev/packages/provider)
+* [Package test](https://pub.dev/packages/test)
 
 
 ## Troubleshooting
