@@ -37,7 +37,8 @@ String getUrlToLoadStatusByCountry(String countryInAlpha2Format) {
 
 // -- Diff --
 
-/// Url which returns diff between the latest state and previous one.
+/// Url which returns diff between the latest state and previous one
+/// for all available countries.
 String getUrlToLoadDiff() => '$BASE_COVID_URL/diff';
 
 /// Url which returns diff between the latest state and previous one
@@ -73,8 +74,8 @@ String getUrlToLoadTimelineByCountry(String countryInAlpha2Format) {
 
 // -- Country --
 
-/// Url which returns all the available countries.
-String getUrlToLoadAvailableCountry() => '$BASE_COVID_URL/countries';
+/// Url which returns all available countries.
+String getUrlToLoadAvailableCountries() => '$BASE_COVID_URL/countries';
 
 // -- Prediction --
 

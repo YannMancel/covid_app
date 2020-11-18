@@ -77,7 +77,7 @@ void main() {
   group('Country', () {
     test('Country should be a success', () {
       expect(
-          covidAPI.getUrlToLoadAvailableCountry(),
+          covidAPI.getUrlToLoadAvailableCountries(),
           '$COVID_URL/countries');
     });
   });
