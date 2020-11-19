@@ -1,5 +1,6 @@
 import 'package:covid_app/bloc_layer/covid_data_bloc.dart';
 import 'package:covid_app/data_layer/country.dart';
+import 'package:covid_app/ui_layer/countries_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -33,23 +34,27 @@ class _HomePageState extends State<HomePage> {
 
   Widget _getDrawer() {
     return Drawer(
-        child: ListView(padding: EdgeInsets.zero, children: [
-          DrawerHeader(
-              decoration: const BoxDecoration(
-                  gradient: const LinearGradient(
-                      colors: [Colors.deepPurple, Colors.purpleAccent])),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _getCountryNumber(),
-                  ElevatedButton.icon(
-                    icon: Icon(Icons.add),
+        child: Container(
+            child: Column(children: [
+                Container(width: double.infinity, child: _getDrawerHeader()),
+                Expanded(child: _getCountriesFromSharedPreferences())
+            ])));
+  }
+
+  Widget _getDrawerHeader() {
+    return DrawerHeader(
+        decoration: const BoxDecoration(gradient: const LinearGradient(
+            colors: [Colors.deepPurple, Colors.purpleAccent])),
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+                _getCountryNumber(),
+                ElevatedButton.icon(
+                    icon: const Icon(Icons.add),
                     onPressed: _showAddDialog,
-                    label: const Text('Countries', style: TextStyle(
-                      color: Colors.white, fontSize: 20.0)))
-                ])),
-          _getCountriesFromSharedPreferences()
-        ]));
+                    label: const Text('Countries', style: const TextStyle(
+                        color: Colors.white, fontSize: 20.0)))
+            ]));
   }
 
   Widget _getCountryNumber() {
@@ -57,39 +62,42 @@ class _HomePageState extends State<HomePage> {
         StreamBuilder<List<Country>>(
             stream: bloc.countriesStream,
             initialData: bloc.countries,
-            builder: (context, snapshot) {
+            builder: (_, snapshot) {
               if (snapshot.hasData) {
                 return Text(
                     '${snapshot.data.length} available countries',
-                    style: TextStyle(color: Colors.white, fontSize: 20.0));
+                    style: const TextStyle(color: Colors.white, fontSize: 20.0));
               }
               return const Text('No country');
             })
     );
   }
 
+  Widget _getCountriesFromSharedPreferences() {
+      return ListView.separated(
+          padding: EdgeInsets.zero,
+          separatorBuilder: (_, __) => Divider(),
+          itemCount: 20,
+          itemBuilder: (_, index) =>
+              ListTile(
+                  title: Text('Test $index'),
+                  trailing: const Icon(Icons.delete),
+                  onTap: () => Navigator.pop(context)));
+  }
+
   // -- Dialog --
 
   Future<void> _showAddDialog() async {
-  //   return showDialog<void>(
-  //       context: context,
-  //       builder: (_) => CountriesDialog(
-  //           countries: Provider.of<CovidDataBLoC>(context).countries.take(5).toList(),
-  //           actionOnClick: null));
+    return showDialog<void>(
+        context: context,
+        builder: (_) => CountriesDialog(
+            countries: Provider.of<CovidDataBLoC>(context).countries,
+            actionOnClick: _addCountriesIntoSharedPreferences));
   }
 
-  // -- Country --
+  // -- SharedPreferences --
 
-  Widget _getCountriesFromSharedPreferences() {
-      return Container(
-          height: double.maxFinite,
-          //child: SingleChildScrollView(
-              child: ListView.builder(
-                itemCount: 3,
-                itemBuilder: (_, index) =>
-                    ListTile(
-                        title: Text('Test $index'),
-                        trailing: Icon(Icons.close),
-                        onTap: () => Navigator.pop(context))));
+  void _addCountriesIntoSharedPreferences(List<Country> countries) {
+    print(countries);
   }
 }
