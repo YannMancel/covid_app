@@ -1,4 +1,5 @@
 import 'package:covid_app/bloc_layer/covid_data_bloc.dart';
+import 'package:covid_app/bloc_layer/storage_bloc.dart';
 import 'package:covid_app/data_layer/country.dart';
 import 'package:covid_app/ui_layer/countries_dialog.dart';
 import 'package:flutter/material.dart';
@@ -74,15 +75,27 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _getCountriesFromSharedPreferences() {
-      return ListView.separated(
-          padding: EdgeInsets.zero,
-          separatorBuilder: (_, __) => Divider(),
-          itemCount: 20,
-          itemBuilder: (_, index) =>
-              ListTile(
-                  title: Text('Test $index'),
-                  trailing: const Icon(Icons.delete),
-                  onTap: () => Navigator.pop(context)));
+    return Consumer<StorageBLoC>(builder: (_, bloc, __) =>
+        StreamBuilder<List<String>>(
+            stream: bloc.countryNamesStream,
+            initialData: bloc.countryName,
+            builder: (_, snapshot) {
+              return ListView.separated(
+                  padding: EdgeInsets.zero,
+                  separatorBuilder: (_, __) => Divider(),
+                  itemCount: (snapshot.hasData)
+                      ? snapshot.data.length
+                      : 0,
+                  itemBuilder: (_, index) =>
+                      ListTile(
+                          title: Text(snapshot.data[index]),
+                          trailing: const Icon(Icons.delete),
+                          onTap: () {
+                            _removeCountryInStorage(snapshot.data[index]);
+                            Navigator.pop(context);
+                          }));
+            })
+    );
   }
 
   // -- Dialog --
@@ -92,12 +105,22 @@ class _HomePageState extends State<HomePage> {
         context: context,
         builder: (_) => CountriesDialog(
             countries: Provider.of<CovidDataBLoC>(context).countries,
-            actionOnClick: _addCountriesIntoSharedPreferences));
+            actionOnClick: _addCountriesInStorage));
   }
 
-  // -- SharedPreferences --
+  // -- Storage --
 
-  void _addCountriesIntoSharedPreferences(List<Country> countries) {
-    print(countries);
+  Future<void> _addCountriesInStorage(List<Country> countries) async {
+    final newCountryNames = countries
+        .map((country) => country.name)
+        .toList();
+
+    Provider.of<StorageBLoC>(context, listen: false)
+        .addCountryNames(newCountryNames);
+  }
+
+  Future<void> _removeCountryInStorage(String countryName) async {
+    Provider.of<StorageBLoC>(context, listen: false)
+        .removeCountryName(countryName);
   }
 }
