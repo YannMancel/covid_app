@@ -2,6 +2,9 @@ import 'package:covid_app/repositories/covid_repository.dart';
 import 'package:covid_app/repositories/data_repository.dart';
 import 'package:test/test.dart';
 
+const COUNTRY_GOOD_FORMAT = 'FR';
+const COUNTRY_BAD_FORMAT = 'France';
+
 void main() {
 
   // FIELDS --------------------------------------------------------------------
@@ -19,15 +22,41 @@ void main() {
 
   // -- Status --
 
-  test('Status should be a success', () async {
-    final data = await repository.getStatusForAllAvailableCountries();
-    expect(data.isNotEmpty, true);
+  group('Status', () {
+    test('Status should be a success', () async {
+      final data = await repository.getStatusForAllAvailableCountries();
+      expect(data.isNotEmpty, true);
+    });
+
+    test('Status by country should be a success', () async {
+      final data = await repository.getStatusByCountry(COUNTRY_GOOD_FORMAT);
+      expect(data != null, true);
+      expect(data.country, COUNTRY_GOOD_FORMAT);
+    });
+
+    test('Status by country should be a fail', () async {
+      final data = await repository.getStatusByCountry(COUNTRY_BAD_FORMAT);
+      expect(data == null, true);
+    });
   });
 
   // -- Diff --
 
-  test('Diff should be a success', () async {
-    final data = await repository.getDiffForAllAvailableCountries();
-    expect(data.isNotEmpty, true);
+  group('Diff', () {
+    test('Diff should be a success', () async {
+      final data = await repository.getDiffForAllAvailableCountries();
+      expect(data.isNotEmpty, true);
+    });
+
+    test('Diff by country should be a success', () async {
+      final data = await repository.getDiffByCountry(COUNTRY_GOOD_FORMAT);
+      expect(data != null, true);
+      expect(data.country, COUNTRY_GOOD_FORMAT);
+    });
+
+    test('Diff by country should be a fail', () async {
+      final data = await repository.getDiffByCountry(COUNTRY_BAD_FORMAT);
+      expect(data == null, true);
+    });
   });
 }

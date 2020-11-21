@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:covid_app/bloc_layer/base_bloc.dart';
 import 'package:covid_app/helpers/shared_preferences_helpers.dart' as sharedPreferences;
+import 'package:rxdart/rxdart.dart';
 
 const COUNTRIES_KEY = 'countries';
 
@@ -10,9 +11,8 @@ class StorageBLoC extends BLoC {
   // FIELDS --------------------------------------------------------------------
 
   List<String> _countryNames;
-  List<String> get countryName => _countryNames;
 
-  final _countryNamesController = StreamController<List<String>>.broadcast();
+  final _countryNamesController = BehaviorSubject<List<String>>();
   Stream<List<String>> get countryNamesStream => _countryNamesController.stream;
 
   // CONSTRUCTORS --------------------------------------------------------------
@@ -60,7 +60,7 @@ class StorageBLoC extends BLoC {
       final isSaved = await sharedPreferences
           .setStringListFromSharedPreferences(COUNTRIES_KEY, _countryNames);
 
-      if (isSaved) _countryNamesController.sink.add(_countryNames);;
+      if (isSaved) _countryNamesController.sink.add(_countryNames);
     }
   }
 }

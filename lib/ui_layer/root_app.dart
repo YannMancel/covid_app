@@ -1,5 +1,4 @@
-import 'package:covid_app/bloc_layer/covid_data_bloc.dart';
-import 'package:covid_app/bloc_layer/storage_bloc.dart';
+import 'package:covid_app/bloc_layer/app_bloc.dart';
 import 'package:covid_app/ui_layer/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,18 +13,10 @@ class RootApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity),
-      home: MultiProvider(
-          providers: [
-            Provider<CovidDataBLoC>(
-              create: (_) => CovidDataBLoC(),
-              dispose: (_, CovidDataBLoC bloc) => bloc.dispose(),
-              lazy: false),
-            Provider<StorageBLoC>(
-                create: (_) => StorageBLoC(),
-                dispose: (_, StorageBLoC bloc) => bloc.dispose(),
-                lazy: false)
-          ],
-          child: HomePage(title: 'COVID-19')
-      ));
+      home: Provider<AppBLoc>(
+          create: (_) => AppBLoc(),
+          dispose: (_, AppBLoc bloc) => bloc.dispose(),
+          lazy: false,
+          child: HomePage(title: 'COVID-19')));
   }
 }

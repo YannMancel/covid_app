@@ -1,6 +1,6 @@
-import 'package:covid_app/bloc_layer/covid_data_bloc.dart';
-import 'package:covid_app/bloc_layer/storage_bloc.dart';
+import 'package:covid_app/bloc_layer/app_bloc.dart';
 import 'package:covid_app/data_layer/country.dart';
+import 'package:covid_app/data_layer/status.dart';
 import 'package:covid_app/ui_layer/countries_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -24,32 +24,38 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(widget.title), centerTitle: true),
-      drawer: _getDrawer(),
-      body: SingleChildScrollView(
-        child: Container()));
+    return Consumer<AppBLoc>(builder: (_, bloc, __) =>
+        Scaffold(
+          appBar: AppBar(title: Text(widget.title), centerTitle: true),
+          drawer: _getDrawer(bloc),
+          body: Center(child:
+              StreamBuilder<List<Status>>(
+                stream: bloc.covidDataBLoC.statusStream,
+                builder: (_, snapshot) =>
+                (snapshot.hasData)
+                    ? Text(snapshot.data.length.toString())
+                    : const Text("No data")))));
   }
 
   // -- UI --
 
-  Widget _getDrawer() {
+  Widget _getDrawer(AppBLoc bloc) {
     return Drawer(
         child: Container(
             child: Column(children: [
-                Container(width: double.infinity, child: _getDrawerHeader()),
-                Expanded(child: _getCountriesFromSharedPreferences())
+                Container(width: double.infinity, child: _getDrawerHeader(bloc)),
+                Expanded(child: _getCountriesFromStorage(bloc))
             ])));
   }
 
-  Widget _getDrawerHeader() {
+  Widget _getDrawerHeader(AppBLoc bloc) {
     return DrawerHeader(
         decoration: const BoxDecoration(gradient: const LinearGradient(
             colors: [Colors.deepPurple, Colors.purpleAccent])),
         child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-                _getCountryNumber(),
+                _getCountryNumber(bloc),
                 ElevatedButton.icon(
                     icon: const Icon(Icons.add),
                     onPressed: _showAddDialog,
@@ -58,53 +64,46 @@ class _HomePageState extends State<HomePage> {
             ]));
   }
 
-  Widget _getCountryNumber() {
-    return Consumer<CovidDataBLoC>(builder: (_, bloc, __) =>
-        StreamBuilder<List<Country>>(
-            stream: bloc.countriesStream,
-            initialData: bloc.countries,
-            builder: (_, snapshot) {
-              if (snapshot.hasData) {
-                return Text(
-                    '${snapshot.data.length} available countries',
-                    style: const TextStyle(color: Colors.white, fontSize: 20.0));
-              }
-              return const Text('No country');
-            })
-    );
+  Widget _getCountryNumber(AppBLoc bloc) {
+    return StreamBuilder<List<Country>>(
+        stream: bloc.covidDataBLoC.countriesStream,
+        builder: (_, snapshot) =>
+          (snapshot.hasData)
+              ? Text('${snapshot.data.length} available countries',
+                  style: const TextStyle(color: Colors.white, fontSize: 20.0))
+              : const Text('No country'));
   }
 
-  Widget _getCountriesFromSharedPreferences() {
-    return Consumer<StorageBLoC>(builder: (_, bloc, __) =>
-        StreamBuilder<List<String>>(
-            stream: bloc.countryNamesStream,
-            initialData: bloc.countryName,
-            builder: (_, snapshot) {
-              return ListView.separated(
-                  padding: EdgeInsets.zero,
-                  separatorBuilder: (_, __) => Divider(),
-                  itemCount: (snapshot.hasData)
-                      ? snapshot.data.length
-                      : 0,
-                  itemBuilder: (_, index) =>
-                      ListTile(
-                          title: Text(snapshot.data[index]),
-                          trailing: const Icon(Icons.delete),
-                          onTap: () {
-                            _removeCountryInStorage(snapshot.data[index]);
-                            Navigator.pop(context);
-                          }));
-            })
-    );
+  Widget _getCountriesFromStorage(AppBLoc bloc) {
+    return StreamBuilder<List<String>>(
+        stream: bloc.storageBLoC.countryNamesStream,
+        builder: (_, snapshot) =>
+            ListView.separated(
+                padding: EdgeInsets.zero,
+                separatorBuilder: (_, __) => const Divider(),
+                itemCount: (snapshot.hasData)
+                    ? snapshot.data.length : 0,
+                itemBuilder: (_, index) =>
+                    ListTile(
+                        title: Text(snapshot.data[index]),
+                        trailing: const Icon(Icons.delete),
+                        onTap: () {
+                          _removeCountryInStorage(snapshot.data[index]);
+                          Navigator.pop(context);
+                        })));
   }
 
   // -- Dialog --
 
   Future<void> _showAddDialog() async {
+    final countries = Provider.of<AppBLoc>(context, listen: false)
+        .covidDataBLoC
+        .countries;
+
     return showDialog<void>(
         context: context,
         builder: (_) => CountriesDialog(
-            countries: Provider.of<CovidDataBLoC>(context).countries,
+            countries: countries,
             actionOnClick: _addCountriesInStorage));
   }
 
@@ -112,15 +111,17 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _addCountriesInStorage(List<Country> countries) async {
     final newCountryNames = countries
-        .map((country) => country.name)
+        .map((country) => '${country.name} (${country.alpha2})')
         .toList();
 
-    Provider.of<StorageBLoC>(context, listen: false)
+    Provider.of<AppBLoc>(context, listen: false)
+        .storageBLoC
         .addCountryNames(newCountryNames);
   }
 
   Future<void> _removeCountryInStorage(String countryName) async {
-    Provider.of<StorageBLoC>(context, listen: false)
+    Provider.of<AppBLoc>(context, listen: false)
+        .storageBLoC
         .removeCountryName(countryName);
   }
 }

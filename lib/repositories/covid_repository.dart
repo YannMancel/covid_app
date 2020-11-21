@@ -47,6 +47,21 @@ class CovidRepository extends DataRepository {
     return status;
   }
 
+  @override
+  Future<Status> getStatusByCountry(String countryInAlpha2Format) async {
+    final url = covidAPI.getUrlToLoadStatusByCountry(countryInAlpha2Format);
+
+    // Error with format of argument
+    if (url == null) return null;
+
+    final http.Response response = await http.get(url);
+
+    // Error GET request
+    if (response.statusCode != 200) return null;
+
+    return Status.fromMap(convert.jsonDecode(response.body));
+  }
+
   // -- Diff --
 
   @override
@@ -64,5 +79,20 @@ class CovidRepository extends DataRepository {
         diff.add(Diff.fromMap(statusMap)));
 
     return diff;
+  }
+
+  @override
+  Future<Diff> getDiffByCountry(String countryInAlpha2Format) async {
+    final url = covidAPI.getUrlToLoadDiffByCountry(countryInAlpha2Format);
+
+    // Error with format of argument
+    if (url == null) return null;
+
+    final http.Response response = await http.get(url);
+
+    // Error GET request
+    if (response.statusCode != 200) return null;
+
+    return Diff.fromMap(convert.jsonDecode(response.body));
   }
 }

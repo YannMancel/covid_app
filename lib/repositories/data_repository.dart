@@ -4,13 +4,26 @@ import 'package:covid_app/data_layer/status.dart';
 
 abstract class DataRepository {
 
+  // -- Country --
+
   /// Returns all available countries.
   Future<List<Country>> getAvailableCountries();
+
+  // -- Status --
 
   /// Returns latest [Status] for all available countries.
   Future<List<Status>> getStatusForAllAvailableCountries();
 
-  /// Returns [Diff] between the latest state and previous one.
+  /// Returns latest [Status] for a country.
+  Future<Status> getStatusByCountry(String countryInAlpha2Format);
+
+  // -- Diff --
+
+  /// Returns [Diff] between the latest state and previous one
   /// for all available countries.
   Future<List<Diff>> getDiffForAllAvailableCountries();
+
+  /// Returns [Diff] between the latest state and previous one
+  /// for a country.
+  Future<Diff> getDiffByCountry(String countryInAlpha2Format);
 }
