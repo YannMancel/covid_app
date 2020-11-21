@@ -51,14 +51,25 @@ class CovidDataBLoC extends BLoC {
 
     for(int i = 0 ; i < countryNames.length ; i++) {
       // ex: countryName = France (FR)
-      var name = countryNames[i].split(' ').last;
-      name = name.substring(1, name.length - 1);
+      var nameFormats = countryNames[i].split(' ');
 
-      final generalStatus = await _repository.getStatusByCountry(name);
-      final timeline = await _repository.getTimelineByCountry(name);
+      // ex: France
+      final nameStandardFormat = nameFormats.first;
+
+      // ex: FR
+      var nameAlpha2Format = nameFormats.last;
+      nameAlpha2Format =
+          nameAlpha2Format.substring(1, nameAlpha2Format.length - 1);
+
+      final generalStatus = await _repository
+          .getStatusByCountry(nameAlpha2Format);
+      final timeline = await _repository
+          .getTimelineByCountry(nameAlpha2Format);
 
       if (generalStatus != null || timeline != null) {
-        var map = <String, dynamic>{};
+        var map = <String, dynamic>{
+          COUNTRY_NAME: nameStandardFormat
+        };
 
         if (generalStatus != null) map[GENERAL_STATUS] = generalStatus;
         if (timeline != null) map[TIMELINE] = timeline;

@@ -2,6 +2,7 @@ import 'package:covid_app/bloc_layer/app_bloc.dart';
 import 'package:covid_app/data_layer/country.dart';
 import 'package:covid_app/data_layer/status.dart';
 import 'package:covid_app/ui_layer/countries_dialog.dart';
+import 'package:covid_app/ui_layer/country_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -32,7 +33,7 @@ class _HomePageState extends State<HomePage> {
               StreamBuilder<List<Map<String, dynamic>>>(
                 stream: bloc.covidDataBLoC.statusStream,
                 builder: (_, snapshot) =>
-                (snapshot.hasData)
+                (snapshot.hasData && snapshot.data.isNotEmpty)
                     ? _getCountryCards(snapshot.data)
                     : const Text("No data")))));
   }
@@ -97,12 +98,14 @@ class _HomePageState extends State<HomePage> {
     return ListView.builder(
       itemCount: statusByCountries.length,
         itemBuilder: (_, index) {
+          final String countryName = statusByCountries[index][COUNTRY_NAME];
           final Status generalStatus = statusByCountries[index][GENERAL_STATUS];
           final List<Status> timeline = statusByCountries[index][TIMELINE];
 
-          return ListTile(
-              title: Text('generalStatus ${generalStatus.country}'),
-              subtitle: Text('timeline length ${timeline.length}'));
+          return CountryCard(
+              countryName: countryName,
+              generalStatus: generalStatus,
+              timeline: timeline);
         });
   }
   // -- Dialog --
