@@ -13,8 +13,8 @@ class CovidDataBLoC extends BLoC {
 
   final DataRepository _repository = CovidRepository();
 
+  List<String> _countriesFromStorage;
   List<Country> _countries;
-  List<Country> get countries => _countries;
 
   final _countriesController = BehaviorSubject<List<Country>>();
   Stream<List<Country>> get countriesStream => _countriesController.stream;
@@ -78,6 +78,28 @@ class CovidDataBLoC extends BLoC {
       }
     }
 
+    _countriesFromStorage = countryNames;
     _statusController.sink.add(statusOfCountries);
+  }
+
+  // -- Country --
+
+  List<Country> getCountriesNotSelected() {
+    if (_countries == null || _countries.isEmpty) return null;
+
+    if (_countriesFromStorage == null || _countriesFromStorage.isEmpty)
+      return _countries;
+
+    var selectedCountries = _countriesFromStorage
+        .map((country) {
+          // ex: countryName = France (FR)
+          var name = country.split(' ').last;
+          return name.substring(1, name.length - 1);
+        })
+        .toList();
+
+    return _countries
+        .where((country) => !selectedCountries.contains(country.alpha2))
+        .toList();
   }
 }

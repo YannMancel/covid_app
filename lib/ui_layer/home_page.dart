@@ -85,13 +85,18 @@ class _HomePageState extends State<HomePage> {
                 itemCount: (snapshot.hasData)
                     ? snapshot.data.length : 0,
                 itemBuilder: (_, index) =>
-                    ListTile(
-                        title: Text(snapshot.data[index]),
-                        trailing: const Icon(Icons.delete),
-                        onTap: () {
-                          _removeCountryInStorage(snapshot.data[index]);
-                          Navigator.pop(context);
-                        })));
+                    Row(children: [
+                      SizedBox(width: 16.0),
+                      Expanded(child: Text(snapshot.data[index])),
+                      IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.black54),
+                          onPressed: () =>
+                              _removeCountryInStorage(snapshot.data[index])),
+                      IconButton(
+                          icon: const Icon(
+                              Icons.arrow_forward_ios, color: Colors.black54),
+                          onPressed: () => Navigator.pop(context))
+                    ])));
   }
 
   Widget _getCountryCards(List<Map<String, dynamic>> statusByCountries){
@@ -108,12 +113,13 @@ class _HomePageState extends State<HomePage> {
               timeline: timeline);
         });
   }
+
   // -- Dialog --
 
   Future<void> _showAddDialog() async {
     final countries = Provider.of<AppBLoc>(context, listen: false)
         .covidDataBLoC
-        .countries;
+        .getCountriesNotSelected();
 
     return showDialog<void>(
         context: context,
