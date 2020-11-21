@@ -19,8 +19,8 @@ class CovidDataBLoC extends BLoC {
   final _countriesController = BehaviorSubject<List<Country>>();
   Stream<List<Country>> get countriesStream => _countriesController.stream;
 
-  final _statusController = StreamController<List<Status>>();
-  Stream<List<Status>> get statusStream => _statusController.stream;
+  final _statusController = StreamController<List<Map<String, dynamic>>>();
+  Stream<List<Map<String, dynamic>>> get statusStream => _statusController.stream;
 
   // CONSTRUCTORS --------------------------------------------------------------
 
@@ -47,15 +47,24 @@ class CovidDataBLoC extends BLoC {
   }
 
   Future<void> getStatusOfSelectedCountries(List<String> countryNames) async {
-    var statusOfCountries = <Status>[];
+    var statusOfCountries = <Map<String, dynamic>>[];
 
     for(int i = 0 ; i < countryNames.length ; i++) {
       // ex: countryName = France (FR)
       var name = countryNames[i].split(' ').last;
       name = name.substring(1, name.length - 1);
 
-      final status = await _repository.getStatusByCountry(name);
-      if (status != null) statusOfCountries.add(status);
+      final generalStatus = await _repository.getStatusByCountry(name);
+      final timeline = await _repository.getTimelineByCountry(name);
+
+      if (generalStatus != null || timeline != null) {
+        var map = <String, dynamic>{};
+
+        if (generalStatus != null) map[GENERAL_STATUS] = generalStatus;
+        if (timeline != null) map[TIMELINE] = timeline;
+
+        statusOfCountries.add(map);
+      }
     }
 
     _statusController.sink.add(statusOfCountries);

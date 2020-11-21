@@ -95,4 +95,27 @@ class CovidRepository extends DataRepository {
 
     return Diff.fromMap(convert.jsonDecode(response.body));
   }
+
+  // -- Timeline --
+
+  @override
+  Future<List<Status>> getTimelineByCountry(String countryInAlpha2Format) async {
+    final url = covidAPI.getUrlToLoadTimelineByCountry(countryInAlpha2Format);
+
+    // Error with format of argument
+    if (url == null) return null;
+
+    final http.Response response = await http.get(url);
+
+    // Error GET request
+    if (response.statusCode != 200) return null;
+
+    final List<dynamic> statusInMaps = convert.jsonDecode(response.body);
+
+    var status = <Status>[];
+    statusInMaps.forEach((statusMap) =>
+        status.add(Status.fromMap(statusMap)));
+
+    return status;
+  }
 }

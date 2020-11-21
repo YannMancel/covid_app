@@ -15,9 +15,11 @@ void main() {
 
   // -- Country --
 
-  test('Country should be a success', () async {
-    final data = await repository.getAvailableCountries();
-    expect(data.isNotEmpty, true);
+  group('Country', () {
+    test('Country should be a success', () async {
+      final data = await repository.getAvailableCountries();
+      expect(data.isNotEmpty, true);
+    });
   });
 
   // -- Status --
@@ -56,6 +58,21 @@ void main() {
 
     test('Diff by country should be a fail', () async {
       final data = await repository.getDiffByCountry(COUNTRY_BAD_FORMAT);
+      expect(data == null, true);
+    });
+  });
+
+  // -- Timeline --
+
+  group('Timeline', () {
+    test('Timeline by country should be a success', () async {
+      final data = await repository.getTimelineByCountry(COUNTRY_GOOD_FORMAT);
+      expect(data != null, true);
+      expect(data[0].country, COUNTRY_GOOD_FORMAT);
+    });
+
+    test('Timeline by country should be a fail', () async {
+      final data = await repository.getTimelineByCountry(COUNTRY_BAD_FORMAT);
       expect(data == null, true);
     });
   });

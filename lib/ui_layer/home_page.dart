@@ -29,11 +29,11 @@ class _HomePageState extends State<HomePage> {
           appBar: AppBar(title: Text(widget.title), centerTitle: true),
           drawer: _getDrawer(bloc),
           body: Center(child:
-              StreamBuilder<List<Status>>(
+              StreamBuilder<List<Map<String, dynamic>>>(
                 stream: bloc.covidDataBLoC.statusStream,
                 builder: (_, snapshot) =>
                 (snapshot.hasData)
-                    ? Text(snapshot.data.length.toString())
+                    ? _getCountryCards(snapshot.data)
                     : const Text("No data")))));
   }
 
@@ -93,6 +93,18 @@ class _HomePageState extends State<HomePage> {
                         })));
   }
 
+  Widget _getCountryCards(List<Map<String, dynamic>> statusByCountries){
+    return ListView.builder(
+      itemCount: statusByCountries.length,
+        itemBuilder: (_, index) {
+          final Status generalStatus = statusByCountries[index][GENERAL_STATUS];
+          final List<Status> timeline = statusByCountries[index][TIMELINE];
+
+          return ListTile(
+              title: Text('generalStatus ${generalStatus.country}'),
+              subtitle: Text('timeline length ${timeline.length}'));
+        });
+  }
   // -- Dialog --
 
   Future<void> _showAddDialog() async {

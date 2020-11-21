@@ -1,4 +1,7 @@
 
+const GENERAL_STATUS = 'general_status';
+const TIMELINE = 'timeline';
+
 class Status {
 
   // FIELDS --------------------------------------------------------------------

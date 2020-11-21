@@ -26,4 +26,9 @@ abstract class DataRepository {
   /// Returns [Diff] between the latest state and previous one
   /// for a country.
   Future<Diff> getDiffByCountry(String countryInAlpha2Format);
+
+  // -- Timeline --
+
+  /// Returns a timeline in [List] of [Status] for a specific country.
+  Future<List<Status>> getTimelineByCountry(String countryInAlpha2Format);
 }
