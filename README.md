@@ -1,6 +1,12 @@
 # covid_app
 
-A Flutter application to show COVID-19 data from various sources.
+**Goal**: A Flutter application to show COVID-19 data from various sources.
+
+
+## Phone display
+<p align="middle">
+     <img src="./screenshots/phone_1.png" width="30%" height="30%"> <img src="./screenshots/phone_2.png" width="30%" height="30%"> <img src="./screenshots/phone_3.png" width="30%" height="30%">
+</p>
 
 
 ## Requirements
