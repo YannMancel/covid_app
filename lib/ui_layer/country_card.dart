@@ -22,26 +22,34 @@ extension on CovidParameter {
 
 // CLASSES ---------------------------------------------------------------------
 
-/// A [StatelessWidget] subclass.
-class CountryCard extends StatelessWidget {
-
-  // FIELDS --------------------------------------------------------------------
-
+/// A [StatefulWidget] subclass.
+class CountryCard extends StatefulWidget {
   final String countryName;
+  final String lastUpdate;
   final Status generalStatus;
   final List<List<Point<int>>> timeline;
-
-  // CONSTRUCTORS --------------------------------------------------------------
 
   CountryCard({
     Key key,
     @required this.countryName,
+    @required this.lastUpdate,
     @required this.generalStatus,
     @required this.timeline}) : super(key: key);
 
+  @override
+  _CountryCardState createState() => _CountryCardState();
+}
+
+/// A [State] of [CountryCard] subclass.
+class _CountryCardState extends State<CountryCard> {
+
+  // FIELDS --------------------------------------------------------------------
+
+  CovidParameter _selectedParameter = CovidParameter.CASES;
+
   // METHODS -------------------------------------------------------------------
 
-  // -- StatelessWidget --
+  // -- State --
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +61,7 @@ class CountryCard extends StatelessWidget {
             clipBehavior: Clip.hardEdge,
             child: Container(
                 padding: const EdgeInsets.all(4.0),
+                color: Colors.grey.shade300,
                 child: Column(
                     children: [
                       _getCountryName(),
@@ -66,26 +75,35 @@ class CountryCard extends StatelessWidget {
   // -- UI --
 
   Widget _getCountryName() {
-    return Text(countryName, style: TextStyle(
+    return Text(widget.countryName, style: const TextStyle(
         fontSize: 20.0, fontWeight: FontWeight.bold));
   }
 
   Widget _getGeneralStatus() {
-    return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _getSpecificStatus(CovidParameter.CASES, generalStatus.cases),
-          _getSpecificStatus(CovidParameter.RECOVERED, generalStatus.recovered),
-          _getSpecificStatus(CovidParameter.DEATHS, generalStatus.deaths)
-        ]);
+    return Column(
+      children: [
+        Text('Last update (${widget.lastUpdate})'),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _getSpecificStatus(CovidParameter.CASES, widget.generalStatus.cases),
+            _getSpecificStatus(CovidParameter.RECOVERED, widget.generalStatus.recovered),
+            _getSpecificStatus(CovidParameter.DEATHS, widget.generalStatus.deaths)
+          ])
+      ]);
   }
 
   Widget _getSpecificStatus(CovidParameter parameter, int data) {
     return Column(
-        children: [
+      children: [
+          Radio(
+            value: parameter,
+            groupValue: _selectedParameter,
+            onChanged: (parameter) => setState(() =>
+                _selectedParameter = parameter)),
           Text(parameter.toShortString()),
           Text('$data', style: TextStyle(color: parameter.getColor()))
-        ]);
+      ]);
   }
 
   Widget _getChart() {
@@ -122,11 +140,21 @@ class CountryCard extends StatelessWidget {
   // -- Chart --
 
   List<LineChartBarData> _getLineBarsData() {
-    return [
-      _getLineBarData(CovidParameter.CASES, timeline[0]),
-      _getLineBarData(CovidParameter.RECOVERED, timeline[1]),
-      _getLineBarData(CovidParameter.DEATHS, timeline[2]),
-    ];
+    var lineBars = <LineChartBarData>[];
+
+    switch (_selectedParameter) {
+      case CovidParameter.CASES:
+        lineBars.add(_getLineBarData(CovidParameter.CASES, widget.timeline[0]));
+        break;
+      case CovidParameter.RECOVERED:
+        lineBars.add(_getLineBarData(CovidParameter.RECOVERED, widget.timeline[1]));
+        break;
+      case CovidParameter.DEATHS:
+        lineBars.add(_getLineBarData(CovidParameter.DEATHS, widget.timeline[2]));
+        break;
+    }
+
+    return lineBars;
   }
 
   LineChartBarData _getLineBarData(CovidParameter parameter, List<Point<int>> data) {

@@ -1,5 +1,6 @@
 
 const COUNTRY_NAME = 'country_name';
+const LAST_UPDATE = 'last_update';
 const GENERAL_STATUS = 'general_status';
 const TIMELINE = 'timeline';
 

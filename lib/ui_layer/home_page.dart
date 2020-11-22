@@ -105,11 +105,13 @@ class _HomePageState extends State<HomePage> {
       itemCount: statusByCountries.length,
         itemBuilder: (_, index) {
           final String countryName = statusByCountries[index][COUNTRY_NAME];
+          final String lastUpdate = statusByCountries[index][LAST_UPDATE];
           final Status generalStatus = statusByCountries[index][GENERAL_STATUS];
           final List<List<Point<int>>> timeline = statusByCountries[index][TIMELINE];
 
           return CountryCard(
               countryName: countryName,
+              lastUpdate: lastUpdate,
               generalStatus: generalStatus,
               timeline: timeline);
         });

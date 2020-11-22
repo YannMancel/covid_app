@@ -69,7 +69,8 @@ class CovidDataBLoC extends BLoC {
 
       if (generalStatus != null || timeline != null) {
         var map = <String, dynamic>{
-          COUNTRY_NAME: nameStandardFormat
+          COUNTRY_NAME: nameStandardFormat,
+          LAST_UPDATE: generalStatus.lastUpdate.split('T').first
         };
 
         if (generalStatus != null) map[GENERAL_STATUS] = generalStatus;
@@ -113,8 +114,8 @@ class CovidDataBLoC extends BLoC {
   List<List<Point<int>>> _getPointsForChart(List<Status> timeline) {
     var result = [
       <Point<int>>[], // cases
-      <Point<int>>[], // deaths
       <Point<int>>[], // recovered
+      <Point<int>>[]  // deaths
     ];
 
     int index = 0;
