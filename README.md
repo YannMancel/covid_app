@@ -23,6 +23,7 @@ A Flutter application to show COVID-19 data from various sources.
 * [Package provider](https://pub.dev/packages/provider)
 * [Package rxdart](https://pub.dev/packages/rxdart)
 * [Package shared_preferences](https://pub.dev/packages/shared_preferences)
+* [Package fl_chart](https://pub.dev/packages/fl_chart)
 * [Package test](https://pub.dev/packages/test)
 
 

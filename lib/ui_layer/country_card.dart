@@ -1,5 +1,25 @@
 import 'package:covid_app/data_layer/status.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+
+// ENUMS -----------------------------------------------------------------------
+
+enum CovidParameter { CASES, RECOVERED, DEATHS }
+
+extension on CovidParameter {
+  String toShortString() => this.toString().split('.').last.toLowerCase();
+
+  // ignore: missing_return
+  Color getColor() {
+    switch (this) {
+      case CovidParameter.CASES: return Colors.red;
+      case CovidParameter.RECOVERED: return Colors.green;
+      case CovidParameter.DEATHS: return Colors.black87;
+    }
+  }
+}
+
+// CLASSES ---------------------------------------------------------------------
 
 /// A [StatelessWidget] subclass.
 class CountryCard extends StatelessWidget {
@@ -34,36 +54,86 @@ class CountryCard extends StatelessWidget {
                 padding: const EdgeInsets.all(4.0),
                 child: Column(
                     children: [
-                      Text(countryName),
-                      const SizedBox(height: 8.0),
+                      _getCountryName(),
+                      const Divider(),
                       _getGeneralStatus(),
-                      const SizedBox(height: 8.0),
+                      const Divider(),
                       _getChart()
                     ]))));
   }
 
   // -- UI --
 
+  Widget _getCountryName() {
+    return Text(countryName, style: TextStyle(
+        fontSize: 20.0, fontWeight: FontWeight.bold));
+  }
+
   Widget _getGeneralStatus() {
     return Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _getSpecificStatus('Cases', generalStatus.cases),
-          _getSpecificStatus('Recovered', generalStatus.recovered),
-          _getSpecificStatus('Deaths', generalStatus.deaths)
+          _getSpecificStatus(CovidParameter.CASES, generalStatus.cases),
+          _getSpecificStatus(CovidParameter.RECOVERED, generalStatus.recovered),
+          _getSpecificStatus(CovidParameter.DEATHS, generalStatus.deaths)
         ]);
   }
 
-  Widget _getSpecificStatus(String dataName, int data) {
+  Widget _getSpecificStatus(CovidParameter parameter, int data) {
     return Column(
-      children: [
-        Text(dataName),
-        Text('$data'),
-      ]);
+        children: [
+          Text(parameter.toShortString()),
+          Text('$data', style: TextStyle(color: parameter.getColor()))
+        ]);
   }
 
   Widget _getChart() {
-    return Container(height: 200.0, color: Colors.green);
+    return Container(
+        height: 200.0,
+        child: LineChart(
+          LineChartData(
+            lineTouchData: LineTouchData(enabled: false),
+            borderData: FlBorderData(show: false),
+            gridData: FlGridData(show: false),
+            titlesData: FlTitlesData(
+              bottomTitles: SideTitles(
+                showTitles: true,
+                margin: 10.0,
+                getTitles: (value) {
+                  switch (value.toInt()) {
+                    case 0: return 'J0';
+                    case -1: return 'J-1';
+                    case -2: return 'J-2';
+                    case -3: return 'J-3';
+                    case -4: return 'J-4';
+                    case -5: return 'J-5';
+                    case -6: return 'J-6';
+                  }
+                  return '';
+                }
+              ),
+              topTitles: SideTitles(showTitles: false),
+              leftTitles: SideTitles(showTitles: false),
+              rightTitles: SideTitles(showTitles: false)),
+
+            lineBarsData: [
+              LineChartBarData(
+                spots: [
+                  FlSpot(-6, 1),
+                  FlSpot(-5, 1.5),
+                  FlSpot(-4, 1.4),
+                  FlSpot(-3, 3.4),
+                  FlSpot(-2, 2),
+                  FlSpot(-1, 2.2),
+                  FlSpot(0, 1.8),
+                ],
+                isCurved: true,
+                barWidth: 2,
+                colors: [
+                  Colors.purpleAccent
+                ],
+                dotData: FlDotData(show: false))
+            ])));
     //     subtitle: Text('timeline length ${timeline.length}'));
   }
 }
