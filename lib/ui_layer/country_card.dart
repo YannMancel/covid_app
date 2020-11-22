@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:covid_app/data_layer/status.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +29,7 @@ class CountryCard extends StatelessWidget {
 
   final String countryName;
   final Status generalStatus;
-  final List<Status> timeline;
+  final List<List<Point<int>>> timeline;
 
   // CONSTRUCTORS --------------------------------------------------------------
 
@@ -115,25 +116,28 @@ class CountryCard extends StatelessWidget {
               topTitles: SideTitles(showTitles: false),
               leftTitles: SideTitles(showTitles: false),
               rightTitles: SideTitles(showTitles: false)),
+            lineBarsData: _getLineBarsData())));
+  }
 
-            lineBarsData: [
-              LineChartBarData(
-                spots: [
-                  FlSpot(-6, 1),
-                  FlSpot(-5, 1.5),
-                  FlSpot(-4, 1.4),
-                  FlSpot(-3, 3.4),
-                  FlSpot(-2, 2),
-                  FlSpot(-1, 2.2),
-                  FlSpot(0, 1.8),
-                ],
-                isCurved: true,
-                barWidth: 2,
-                colors: [
-                  Colors.purpleAccent
-                ],
-                dotData: FlDotData(show: false))
-            ])));
-    //     subtitle: Text('timeline length ${timeline.length}'));
+  // -- Chart --
+
+  List<LineChartBarData> _getLineBarsData() {
+    return [
+      _getLineBarData(CovidParameter.CASES, timeline[0]),
+      _getLineBarData(CovidParameter.RECOVERED, timeline[1]),
+      _getLineBarData(CovidParameter.DEATHS, timeline[2]),
+    ];
+  }
+
+  LineChartBarData _getLineBarData(CovidParameter parameter, List<Point<int>> data) {
+    return LineChartBarData(
+        spots: data
+            .map((point) =>
+                FlSpot(point.x.toDouble(), point.y.toDouble()))
+            .toList(),
+        isCurved: true,
+        barWidth: 2,
+        colors: [ parameter.getColor() ],
+        dotData: FlDotData(show: false));
   }
 }

@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:covid_app/bloc_layer/app_bloc.dart';
 import 'package:covid_app/data_layer/country.dart';
 import 'package:covid_app/data_layer/status.dart';
@@ -105,7 +106,7 @@ class _HomePageState extends State<HomePage> {
         itemBuilder: (_, index) {
           final String countryName = statusByCountries[index][COUNTRY_NAME];
           final Status generalStatus = statusByCountries[index][GENERAL_STATUS];
-          final List<Status> timeline = statusByCountries[index][TIMELINE];
+          final List<List<Point<int>>> timeline = statusByCountries[index][TIMELINE];
 
           return CountryCard(
               countryName: countryName,

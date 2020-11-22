@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:covid_app/bloc_layer/base_bloc.dart';
 import 'package:covid_app/data_layer/country.dart';
 import 'package:covid_app/data_layer/status.dart';
@@ -72,7 +73,7 @@ class CovidDataBLoC extends BLoC {
         };
 
         if (generalStatus != null) map[GENERAL_STATUS] = generalStatus;
-        if (timeline != null) map[TIMELINE] = timeline;
+        if (timeline != null) map[TIMELINE] = _getPointsForChart(timeline);
 
         statusOfCountries.add(map);
       }
@@ -101,5 +102,32 @@ class CovidDataBLoC extends BLoC {
     return _countries
         .where((country) => !selectedCountries.contains(country.alpha2))
         .toList();
+  }
+
+  // -- Timeline --
+
+  /// Gets a [List] which contains 3 [List]s of [Point].
+  /// - [List] #1 corresponds to the 'cases' values of 7 last days
+  /// - [List] #2 corresponds to the 'recovered' values of 7 last days
+  /// - [List] #3 corresponds to the 'deaths' values of 7 last days
+  List<List<Point<int>>> _getPointsForChart(List<Status> timeline) {
+    var result = [
+      <Point<int>>[], // cases
+      <Point<int>>[], // deaths
+      <Point<int>>[], // recovered
+    ];
+
+    int index = 0;
+
+    // Take the 7 last days
+    timeline.take(7).forEach((status) {
+      result[0].add(Point(index, status.cases));      // cases
+      result[1].add(Point(index, status.recovered));  // recovered
+      result[2].add(Point(index, status.deaths));     // deaths
+
+      index--;
+    });
+
+    return result;
   }
 }
