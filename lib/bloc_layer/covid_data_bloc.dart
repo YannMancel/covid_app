@@ -5,6 +5,7 @@ import 'package:covid_app/data_layer/country.dart';
 import 'package:covid_app/data_layer/status.dart';
 import 'package:covid_app/repositories/covid_repository.dart';
 import 'package:covid_app/repositories/data_repository.dart';
+import 'package:http/http.dart' as http;
 import 'package:rxdart/rxdart.dart';
 
 /// A [BLoC] subclass.
@@ -42,7 +43,7 @@ class CovidDataBLoC extends BLoC {
   // -- StreamController --
 
   Future<void> _loadAllAvailableCountries() async {
-    final countries = await _repository.getAvailableCountries();
+    final countries = await _repository.getAvailableCountries(http.Client());
     _countries = countries;
     _countriesController.sink.add(countries);
   }
@@ -63,9 +64,9 @@ class CovidDataBLoC extends BLoC {
           nameAlpha2Format.substring(1, nameAlpha2Format.length - 1);
 
       final generalStatus = await _repository
-          .getStatusByCountry(nameAlpha2Format);
+          .getStatusByCountry(http.Client(), nameAlpha2Format);
       final timeline = await _repository
-          .getTimelineByCountry(nameAlpha2Format);
+          .getTimelineByCountry(http.Client(), nameAlpha2Format);
 
       if (generalStatus != null || timeline != null) {
         var map = <String, dynamic>{

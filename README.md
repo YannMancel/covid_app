@@ -31,6 +31,7 @@
 * [Package shared_preferences](https://pub.dev/packages/shared_preferences)
 * [Package fl_chart](https://pub.dev/packages/fl_chart)
 * [Package test](https://pub.dev/packages/test)
+* [Package mockito](https://pub.dev/packages/mockito)
 
 
 ## Troubleshooting

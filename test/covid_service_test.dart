@@ -13,21 +13,21 @@ void main() {
     test('Status should be a success', () {
       expect(
           covidAPI.getUrlToLoadStatus(),
-          '$COVID_URL/status');
+          equals('$COVID_URL/status'));
     });
 
     test('Status by country should be a success', () {
       expect(
           covidAPI.getUrlToLoadStatusByCountry(COUNTRY_GOOD_FORMAT),
-          '$COVID_URL/status/$COUNTRY_GOOD_FORMAT');
+          equals('$COVID_URL/status/$COUNTRY_GOOD_FORMAT'));
     });
 
     test('Status by country should be a fail', () {
       // Wrong format for country
-      expect(covidAPI.getUrlToLoadStatusByCountry(COUNTRY_BAD_FORMAT), null);
+      expect(covidAPI.getUrlToLoadStatusByCountry(COUNTRY_BAD_FORMAT), isNull);
 
       // Null country
-      expect(covidAPI.getUrlToLoadStatusByCountry(null), null);
+      expect(covidAPI.getUrlToLoadStatusByCountry(null), isNull);
     });
   });
 
@@ -36,21 +36,21 @@ void main() {
     test('Diff should be a success', () {
       expect(
           covidAPI.getUrlToLoadDiff(),
-          '$COVID_URL/diff');
+          equals('$COVID_URL/diff'));
     });
 
     test('Diff by country should be a success', () {
       expect(
           covidAPI.getUrlToLoadDiffByCountry(COUNTRY_GOOD_FORMAT),
-          '$COVID_URL/diff/$COUNTRY_GOOD_FORMAT');
+          equals('$COVID_URL/diff/$COUNTRY_GOOD_FORMAT'));
     });
 
     test('Diff by country should be a fail', () {
       // Wrong format for country
-      expect(covidAPI.getUrlToLoadDiffByCountry(COUNTRY_BAD_FORMAT), null);
+      expect(covidAPI.getUrlToLoadDiffByCountry(COUNTRY_BAD_FORMAT), isNull);
 
       // Null country
-      expect(covidAPI.getUrlToLoadDiffByCountry(null), null);
+      expect(covidAPI.getUrlToLoadDiffByCountry(null), isNull);
     });
   });
 
@@ -60,15 +60,15 @@ void main() {
     test('Timeline by country should be a success', () {
       expect(
           covidAPI.getUrlToLoadTimelineByCountry(COUNTRY_GOOD_FORMAT),
-          '$COVID_URL/timeline/$COUNTRY_GOOD_FORMAT');
+          equals('$COVID_URL/timeline/$COUNTRY_GOOD_FORMAT'));
     });
 
     test('Timeline by country should be a fail', () {
       // Wrong format for country
-      expect(covidAPI.getUrlToLoadTimelineByCountry(COUNTRY_BAD_FORMAT), null);
+      expect(covidAPI.getUrlToLoadTimelineByCountry(COUNTRY_BAD_FORMAT), isNull);
 
       // Null country
-      expect(covidAPI.getUrlToLoadTimelineByCountry(null), null);
+      expect(covidAPI.getUrlToLoadTimelineByCountry(null), isNull);
     });
   });
 
@@ -78,7 +78,7 @@ void main() {
     test('Country should be a success', () {
       expect(
           covidAPI.getUrlToLoadAvailableCountries(),
-          '$COVID_URL/countries');
+          equals('$COVID_URL/countries'));
     });
   });
 
@@ -88,15 +88,15 @@ void main() {
     test('Prediction by country should be a success', () {
       expect(
           covidAPI.getUrlToLoadPredictionByCountry(COUNTRY_GOOD_FORMAT),
-          '$COVID_URL/prediction/$COUNTRY_GOOD_FORMAT');
+          equals('$COVID_URL/prediction/$COUNTRY_GOOD_FORMAT'));
     });
 
     test('Prediction by country should be a fail', () {
       // Wrong format for country
-      expect(covidAPI.getUrlToLoadPredictionByCountry(COUNTRY_BAD_FORMAT), null);
+      expect(covidAPI.getUrlToLoadPredictionByCountry(COUNTRY_BAD_FORMAT), isNull);
 
       // Null country
-      expect(covidAPI.getUrlToLoadPredictionByCountry(null), null);
+      expect(covidAPI.getUrlToLoadPredictionByCountry(null), isNull);
     });
   });
 }

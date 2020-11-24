@@ -12,110 +12,145 @@ class CovidRepository extends DataRepository {
   // -- Country --
 
   @override
-  Future<List<Country>> getAvailableCountries() async {
-    final url = covidAPI.getUrlToLoadAvailableCountries();
-    final http.Response response = await http.get(url);
+  Future<List<Country>> getAvailableCountries(http.Client client) async {
+    try {
+      final url = covidAPI.getUrlToLoadAvailableCountries();
+      final http.Response response = await client.get(url);
 
-    // Error GET request
-    if (response.statusCode != 200) return null;
+      // Error GET request
+      if (response.statusCode != 200) return null;
 
-    final List<dynamic> countriesInMaps = convert.jsonDecode(response.body);
+      final List<dynamic> countriesInMaps = convert.jsonDecode(response.body);
 
-    var countries = <Country>[];
-    countriesInMaps.forEach((countryMap) =>
-        countries.add(Country.fromMap(countryMap)));
+      var countries = <Country>[];
+      countriesInMaps.forEach((countryMap) =>
+          countries.add(Country.fromMap(countryMap)));
 
-    return countries;
+      return countries;
+    } finally {
+      client.close();
+    }
   }
 
   // -- Status --
 
   @override
-  Future<List<Status>> getStatusForAllAvailableCountries() async {
-    final url = covidAPI.getUrlToLoadStatus();
-    final http.Response response = await http.get(url);
+  Future<List<Status>> getStatusForAllAvailableCountries(
+    http.Client client
+  ) async {
+    try {
+      final url = covidAPI.getUrlToLoadStatus();
+      final http.Response response = await client.get(url);
 
-    // Error GET request
-    if (response.statusCode != 200) return null;
+      // Error GET request
+      if (response.statusCode != 200) return null;
 
-    final List<dynamic> statusInMaps = convert.jsonDecode(response.body);
+      final List<dynamic> statusInMaps = convert.jsonDecode(response.body);
 
-    var status = <Status>[];
-    statusInMaps.forEach((statusMap) =>
-        status.add(Status.fromMap(statusMap)));
+      var status = <Status>[];
+      statusInMaps.forEach((statusMap) =>
+          status.add(Status.fromMap(statusMap)));
 
-    return status;
+      return status;
+    } finally {
+      client.close();
+    }
   }
 
   @override
-  Future<Status> getStatusByCountry(String countryInAlpha2Format) async {
-    final url = covidAPI.getUrlToLoadStatusByCountry(countryInAlpha2Format);
+  Future<Status> getStatusByCountry(
+    http.Client client,
+    String countryInAlpha2Format
+  ) async {
+    try {
+      final url = covidAPI.getUrlToLoadStatusByCountry(countryInAlpha2Format);
 
-    // Error with format of argument
-    if (url == null) return null;
+      // Error with format of argument
+      if (url == null) return null;
 
-    final http.Response response = await http.get(url);
+      final http.Response response = await client.get(url);
 
-    // Error GET request
-    if (response.statusCode != 200) return null;
+      // Error GET request
+      if (response.statusCode != 200) return null;
 
-    return Status.fromMap(convert.jsonDecode(response.body));
+      return Status.fromMap(convert.jsonDecode(response.body));
+    } finally {
+      client.close();
+    }
   }
 
   // -- Diff --
 
   @override
-  Future<List<Diff>> getDiffForAllAvailableCountries() async {
-    final url = covidAPI.getUrlToLoadDiff();
-    final http.Response response = await http.get(url);
+  Future<List<Diff>> getDiffForAllAvailableCountries(http.Client client) async {
+    try {
+      final url = covidAPI.getUrlToLoadDiff();
+      final http.Response response = await client.get(url);
 
-    // Error GET request
-    if (response.statusCode != 200) return null;
+      // Error GET request
+      if (response.statusCode != 200) return null;
 
-    final List<dynamic> diffInMaps = convert.jsonDecode(response.body);
+      final List<dynamic> diffInMaps = convert.jsonDecode(response.body);
 
-    var diff = <Diff>[];
-    diffInMaps.forEach((statusMap) =>
-        diff.add(Diff.fromMap(statusMap)));
+      var diff = <Diff>[];
+      diffInMaps.forEach((statusMap) =>
+          diff.add(Diff.fromMap(statusMap)));
 
-    return diff;
+      return diff;
+    } finally {
+      client.close();
+    }
   }
 
   @override
-  Future<Diff> getDiffByCountry(String countryInAlpha2Format) async {
-    final url = covidAPI.getUrlToLoadDiffByCountry(countryInAlpha2Format);
+  Future<Diff> getDiffByCountry(
+    http.Client client,
+    String countryInAlpha2Format
+  ) async {
+    try {
+      final url = covidAPI.getUrlToLoadDiffByCountry(countryInAlpha2Format);
 
-    // Error with format of argument
-    if (url == null) return null;
+      // Error with format of argument
+      if (url == null) return null;
 
-    final http.Response response = await http.get(url);
+      final http.Response response = await client.get(url);
 
-    // Error GET request
-    if (response.statusCode != 200) return null;
+      // Error GET request
+      if (response.statusCode != 200) return null;
 
-    return Diff.fromMap(convert.jsonDecode(response.body));
+      return Diff.fromMap(convert.jsonDecode(response.body));
+    } finally {
+      client.close();
+    }
   }
 
   // -- Timeline --
 
   @override
-  Future<List<Status>> getTimelineByCountry(String countryInAlpha2Format) async {
-    final url = covidAPI.getUrlToLoadTimelineByCountry(countryInAlpha2Format);
+  Future<List<Status>> getTimelineByCountry(
+    http.Client client,
+    String countryInAlpha2Format
+  ) async {
+    try {
+      final url = covidAPI.getUrlToLoadTimelineByCountry(countryInAlpha2Format);
 
-    // Error with format of argument
-    if (url == null) return null;
+      // Error with format of argument
+      if (url == null) return null;
 
-    final http.Response response = await http.get(url);
+      final http.Response response = await client.get(url);
 
-    // Error GET request
-    if (response.statusCode != 200) return null;
+      // Error GET request
+      if (response.statusCode != 200) return null;
 
-    final List<dynamic> statusInMaps = convert.jsonDecode(response.body);
+      final List<dynamic> statusInMaps = convert.jsonDecode(response.body);
 
-    var status = <Status>[];
-    statusInMaps.forEach((statusMap) =>
-        status.add(Status.fromMap(statusMap)));
+      var status = <Status>[];
+      statusInMaps.forEach((statusMap) =>
+          status.add(Status.fromMap(statusMap)));
 
-    return status;
+      return status;
+    } finally {
+      client.close();
+    }
   }
 }
