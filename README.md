@@ -32,6 +32,7 @@
 * [Package fl_chart](https://pub.dev/packages/fl_chart)
 * [Package test](https://pub.dev/packages/test)
 * [Package mockito](https://pub.dev/packages/mockito)
+* [Package nock](https://pub.dev/packages/nock)
 
 
 ## Troubleshooting

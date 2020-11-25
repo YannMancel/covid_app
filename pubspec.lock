@@ -282,6 +282,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.0.4"
+  nock:
+    dependency: "direct dev"
+    description:
+      name: nock
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.2"
   node_interop:
     dependency: transitive
     description:
